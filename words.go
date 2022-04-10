@@ -29,6 +29,8 @@ func isUnique(url string) bool {
 
 func main() {
 	// options
+	_ = flag.Bool("", false, "Uses all parts of URL by default")
+	verbose := flag.Bool("s", false, "Show source of output.")
 	keys := flag.Bool("keys", false, "Use parameter keys.")
 	vals := flag.Bool("vals", false, "Use parameter values.")
 	paths := flag.Bool("paths", false, "Use URL paths.")
@@ -65,24 +67,42 @@ func main() {
 
 				if *domains {
 					for _, w := range strings.Split(host, ".") {
-						results <- w
+						if *verbose {
+							results <- "[domain] " + w
+						} else {
+							results <- w
+						}
 					}
 				}
 				if *paths {
 					for _, w := range strings.Split(path, "/") {
-						results <- w
+						if *verbose {
+							results <- "[path] " + w
+						} else {
+							results <- w
+						}
 					}
 				}
-				for k, v := range query {
+				for k, values := range query {
 					if *keys {
-						results <- k
+						if *verbose {
+							results <- "[key] " + k
+						} else {
+							results <- k
+						}
 					}
 					if *vals {
-						for _, v1 := range v {
-							for _, v2 := range strings.Split(v1, "/") {
-								results <- v2
+						for _, v := range values {
+							/*
+								for _, v2 := range strings.Split(v1, "/") {
+									results <- v2
+								}
+							*/
+							if *verbose {
+								results <- "[val] " + v
+							} else {
+								results <- v
 							}
-							results <- v1
 						}
 					}
 				}
