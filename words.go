@@ -1,7 +1,3 @@
-/*
-Takes dirty input with urls as input, generates a wordlist based on the components
-*/
-
 package main
 
 import (
@@ -14,9 +10,7 @@ import (
 	"sync"
 )
 
-var (
-	sm sync.Map
-)
+var sm sync.Map
 
 func isUnique(url string) bool {
 	_, present := sm.Load(url)
