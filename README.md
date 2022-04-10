@@ -9,7 +9,7 @@ Generate wordlists from input containing URLs
 ```
 $ words -h
 Usage of words:
-  -	Uses all parts of URL by default
+  -	Uses all parts of URL by default.
   -domains
     	Use domain names.
   -keys
