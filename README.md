@@ -1,6 +1,23 @@
 # words
-Generate wordlists from dirty input containing URLs
+Generate wordlists from input containing URLs
 
 # Examples
-`cat scope | gau | words`  
-`cat url_list.txt | words > wordlist`
+`cat urls.txt | words -s`  
+`cat urls.txt | hakrawler | words -keys -vals`
+
+# Help
+```
+$ words -h
+Usage of words:
+  -	Uses all parts of URL by default
+  -domains
+    	Use domain names.
+  -keys
+    	Use parameter keys.
+  -paths
+    	Use URL paths.
+  -s	Show source of output.
+  -vals
+    	Use parameter values.
+
+```
