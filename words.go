@@ -1,3 +1,7 @@
+/*
+Takes dirty input with urls as input, generates a wordlist based on the components
+*/
+
 package main
 
 import (
@@ -10,7 +14,9 @@ import (
 	"sync"
 )
 
-var sm sync.Map
+var (
+	sm sync.Map
+)
 
 func isUnique(url string) bool {
 	_, present := sm.Load(url)
@@ -24,6 +30,7 @@ func isUnique(url string) bool {
 func main() {
 	// options
 	_ = flag.Bool("", false, "Uses all parts of URL by default")
+	filter := flag.Bool("filter", false, "Filter images and css.")
 	verbose := flag.Bool("s", false, "Show source of output.")
 	keys := flag.Bool("keys", false, "Use parameter keys.")
 	vals := flag.Bool("vals", false, "Use parameter values.")
@@ -109,7 +116,13 @@ func main() {
 	defer w.Flush()
 	for res := range results {
 		if isUnique(res) && res != "" {
-			fmt.Fprintln(w, res)
+			if *filter {
+				if !(strings.HasSuffix(res, ".gif")) && !(strings.HasSuffix(res, ".css")) && !(strings.HasSuffix(res, ".jpg")) && !(strings.HasSuffix(res, ".jpeg")) && !(strings.HasSuffix(res, ".png")) {
+					fmt.Fprintln(w, res)
+				}
+			} else {
+				fmt.Fprintln(w, res)
+			}
 		}
 	}
 }
