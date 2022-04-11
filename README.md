@@ -1,6 +1,9 @@
 # words
 Generate wordlists from input containing URLs
 
+# Installation
+`go install github.com/garlic0x1/words@main`
+
 # Examples
 `cat urls.txt | words -s -filter`  
 `cat urls.txt | hakrawler | words -keys -vals`
