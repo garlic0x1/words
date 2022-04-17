@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"sync"
 )
 
 type Result struct {
@@ -56,6 +57,7 @@ func writer(filter *bool, verbose *bool) {
 func main() {
 	// options
 	_ = flag.Bool("", false, "Uses all parts of URL by default.")
+	threads := flag.Int("t", 2, "Number of goroutines to use.")
 	filter := flag.Bool("filter", false, "Filter images and css.")
 	mode := flag.String("mode", "wordlist", "Options: wordlist, endpoints")
 	verbose := flag.Bool("s", false, "Show source of output.")
@@ -82,12 +84,23 @@ func main() {
 
 	go reader()
 
-	switch {
-	case *mode == "endpoints":
-		go getEndpoints()
-	case *mode == "wordlist":
-		go buildWordlist(keys, vals, paths, domains)
-	}
+	go func() {
+		var wg sync.WaitGroup
+		wg.Add(*threads)
+		for i := 0; i < *threads; i++ {
+			go func() {
+				switch {
+				case *mode == "endpoints":
+					getEndpoints()
+				case *mode == "wordlist":
+					buildWordlist(keys, vals, paths, domains)
+				}
+				wg.Done()
+			}()
+		}
+		wg.Wait()
+		close(Results)
+	}()
 
 	writer(filter, verbose)
 }

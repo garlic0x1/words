@@ -46,7 +46,6 @@ func buildWordlist(keys *bool, vals *bool, paths *bool, domains *bool) {
 			}
 		}
 	}
-	close(Results)
 }
 
 func getEndpoints() {
@@ -66,5 +65,4 @@ func getEndpoints() {
 			Message: parsed.Scheme + "://" + parsed.Host + parsed.Path,
 		}
 	}
-	close(Results)
 }
