@@ -53,78 +53,11 @@ func writer(filter *bool, verbose *bool) {
 	}
 }
 
-func getEndpoints() {
-	for parsed := range Queue {
-		newPath := ""
-		for _, str := range strings.Split(parsed.Path, "/") {
-			if !strings.Contains(str, "=") && !strings.Contains(str, ";") {
-				newPath += "/" + str
-			} else {
-				break
-			}
-		}
-		parsed.Path = newPath
-
-		Results <- Result{
-			Type:    "endpoint",
-			Message: parsed.Scheme + "://" + parsed.Host + parsed.Path,
-		}
-	}
-	close(Results)
-}
-
-func buildWordlist(keys *bool, vals *bool, paths *bool, domains *bool) {
-	for parsed := range Queue {
-		host := parsed.Host
-		path := parsed.Path
-		query := parsed.Query()
-
-		if *domains {
-			for _, w := range strings.Split(host, ".") {
-				Results <- Result{
-					Type:    "domain",
-					Message: w,
-				}
-			}
-		}
-		if *paths {
-			for _, w := range strings.Split(path, "/") {
-				Results <- Result{
-					Type:    "path",
-					Message: w,
-				}
-			}
-		}
-		for k, values := range query {
-			if *keys {
-				Results <- Result{
-					Type:    "key",
-					Message: k,
-				}
-			}
-			if *vals {
-				for _, v := range values {
-					/*
-						for _, v2 := range strings.Split(v1, "/") {
-							Results <- v2
-						}
-					*/
-					Results <- Result{
-						Type:    "val",
-						Message: v,
-					}
-				}
-			}
-		}
-	}
-	close(Results)
-}
-
 func main() {
 	// options
 	_ = flag.Bool("", false, "Uses all parts of URL by default.")
 	filter := flag.Bool("filter", false, "Filter images and css.")
-	endpoints := flag.Bool("endpoints", false, "Output unique endpoints from list of URLs.")
+	mode := flag.String("mode", "wordlist", "Options: wordlist, endpoints")
 	verbose := flag.Bool("s", false, "Show source of output.")
 	keys := flag.Bool("keys", false, "Use parameter keys.")
 	vals := flag.Bool("vals", false, "Use parameter values.")
@@ -149,9 +82,10 @@ func main() {
 
 	go reader()
 
-	if *endpoints {
+	switch {
+	case *mode == "endpoints":
 		go getEndpoints()
-	} else {
+	case *mode == "wordlist":
 		go buildWordlist(keys, vals, paths, domains)
 	}
 
