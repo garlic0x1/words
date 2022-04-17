@@ -1,7 +1,3 @@
-/*
-Takes dirty input with urls as input, generates a wordlist based on the components
-*/
-
 package main
 
 import (
