@@ -12,13 +12,15 @@ Generate wordlists from input containing URLs
 ```
 $ words -h
 Usage of words:
-  -	Uses all parts of URL by default
+  -	Uses all parts of URL by default.
   -domains
     	Use domain names.
   -filter
-    	Filter images and css.
+    	Filter images and hashes.
   -keys
     	Use parameter keys.
+  -mode string
+    	Options: wordlist, endpoints (default "wordlist")
   -paths
     	Use URL paths.
   -s	Show source of output.
